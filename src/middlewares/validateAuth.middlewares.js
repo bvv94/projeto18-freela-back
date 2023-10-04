@@ -1,4 +1,4 @@
-import {db} from "../database/database.connection.js";
+import checkPassword from "../repositories/auth.repository.js";
 
 export default async function validateAuth(req, res, next){
     const {authorization} = req.headers;
@@ -7,7 +7,7 @@ export default async function validateAuth(req, res, next){
     if (!token) return res.sendStatus(401);
 
     try{    
-        const session = await db.query(`SELECT * FROM sessions WHERE token=$1 AND active = true;`,[token]);
+        const session = await checkPassword(token);
         if(session.rows.length === 0) return res.sendStatus(401);
         
         res.locals.session = session.rows[0];
